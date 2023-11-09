@@ -19,7 +19,7 @@ if __name__ == '__main__':
         victim = Validator(len(users), "Correct", 2, 0)
         users.append(victim)
         for i in range(0, mCount):
-            users.append(Validator(len(users), "Byzantine", 3, victim, True, True, True, 0))
+            users.append(Validator(len(users), "Byzantine", 3, victim, False, False, False, True, 0))
 
         committee = Committee(111, users, 10, 1)
         for i in range(0, totalRounds):

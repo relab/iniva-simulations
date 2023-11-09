@@ -2,7 +2,7 @@ import random
 from block import Block
 
 class Validator:
-    def __init__(self, id, type, group=0, target=0, attackSteal=False, attackOmission=False, attackForce=False, colatural=1):
+    def __init__(self, id, type, group=0, target=0, attackSteal=False, attackOmission=False, attackForce=False, attackNoVote = False, colatural=1):
         self.id = id
         self.type = type
         self.reward = 0
@@ -12,6 +12,7 @@ class Validator:
         self.attackSteal = attackSteal
         self.attackOmission = attackOmission
         self.attackForce = attackForce
+        self.attackNoVote = attackNoVote
         self.currentRole = "Member"
         self.colatural = colatural
         self.parent = None
@@ -38,6 +39,8 @@ class Validator:
                 self.stealBonus()
             if self.attackForce:
                 self.forcePunishment()
+            if self.attackNoVote:
+                self.noVote(block)
 
     def omitVote(self, fanout, block, blocks):
         if self.currentRole == "Leader":
@@ -60,4 +63,11 @@ class Validator:
         if self.currentRole == "Aggregator":
             if self.target in self.children:
                 self.target.secondChance = True
+
+    def noVote(self, block):
+        if self.target.currentRole == "Leader":
+            block.signatures.remove(self)
+            if self.currentRole == "Aggregator":
+                for child in self.children:
+                    child.secondChance = True
 

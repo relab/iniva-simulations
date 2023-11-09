@@ -24,6 +24,7 @@ class Committee:
         for i in range(1, self.fanout+1):
             self.validators[i].currentRole = "Aggregator"
             self.validators[i].parent = self.validators[0]
+            self.validators[i].children = []
             for j in range((self.fanout * i) + 1, (self.fanout * i) + self.fanout + 1):
                 self.validators[j].parent = self.validators[i]
                 self.validators[i].children.append(self.validators[j])
