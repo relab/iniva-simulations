@@ -44,6 +44,8 @@ class Committee:
                     if v2 in newBlock.signatures and not v2.secondChance:
                         aggregationBonus += self.aggregationBonus * self.blockReward
                         v.reward += self.aggregationBonus * self.blockReward
+            if v.currentRole == "Leader":
+                v.reward += leaderBonus
         votingReward = self.blockReward - leaderBonus - aggregationBonus
         punishments = 0
         for v in newBlock.signatures:
@@ -54,6 +56,7 @@ class Committee:
                 v.reward += votingReward/len(newBlock.signatures)
         for v in newBlock.signatures:
             v.reward += punishments / len(newBlock.signatures)
+        
 
 
 
