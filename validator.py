@@ -53,11 +53,8 @@ class Validator:
                 block.signatures.remove(self.target)
 
     def stealBonus(self):
-        if self.currentRole == "Leader":
-            if self.target.currentRole == "Aggregator":
-                for child in self.target.children:
-                    if child.type == "Byzantine":
-                        child.secondChance = True
+        if self.parent == self.target and self.target.currentRole == "Aggregator":
+            self.secondChance = True
 
     def forcePunishment(self):
         if self.currentRole == "Aggregator":
