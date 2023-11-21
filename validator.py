@@ -15,9 +15,6 @@ class Validator:
         self.attackNoVote = attackNoVote
         self.currentRole = "Member"
         self.colatural = colatural
-        self.parent = None
-        self.children = []
-        self.secondChance = False
 
 
     def propose(self, blocks):
@@ -31,40 +28,7 @@ class Validator:
         if NewBlock.isValid():
             NewBlock.signatures.append(self)
 
-    def attack(self, fanout, block, blocks):
-        if self.type == "Byzantine":
-            if self.attackOmission:
-                self.omitVote(fanout, block, blocks)
-            if self.attackSteal:
-                self.stealBonus()
-            if self.attackForce:
-                self.forcePunishment()
-            if self.attackNoVote:
-                self.noVote(block)
+    def attack(self, block, blocks):
+        pass
 
-    def omitVote(self, fanout, block, blocks):
-        if self.currentRole == "Leader":
-            if len(blocks) == 1:
-                return
-            if blocks[-2].proposer.type == "Byzantine":
-                block.signatures.remove(self.target)
-                return
-            if self.target.currentRole == "Member" and self.target.parent.type == "Byzantine":
-                block.signatures.remove(self.target)
-
-    def stealBonus(self):
-        if self.parent == self.target and self.target.currentRole == "Aggregator":
-            self.secondChance = True
-
-    def forcePunishment(self):
-        if self.currentRole == "Aggregator":
-            if self.target in self.children:
-                self.target.secondChance = True
-
-    def noVote(self, block):
-        if self.target.currentRole == "Leader":
-            block.signatures.remove(self)
-            if self.currentRole == "Aggregator":
-                for child in self.children:
-                    child.secondChance = True
 

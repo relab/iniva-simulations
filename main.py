@@ -1,4 +1,8 @@
 from committee import Committee
+from iniva_committee import InivaCommittee
+from iniva_validator import InivaValidator
+from cosmos_committee import CosmosCommittee
+from cosmos_validator import CosmosValidator
 from validator import Validator
 
 if __name__ == '__main__':
@@ -15,13 +19,13 @@ if __name__ == '__main__':
 
         users = []
         for i in range(0, 110 - mCount):
-            users.append(Validator(len(users), "Correct", 1, 0))
-        victim = Validator(len(users), "Correct", 2, 0)
+            users.append(CosmosValidator(len(users), "Correct", 1, 0))
+        victim = CosmosValidator(len(users), "Correct", 2, 0)
         users.append(victim)
         for i in range(0, mCount):
-            users.append(Validator(len(users), "Byzantine", 3, victim, False, True, False, False, 0))
+            users.append(CosmosValidator(len(users), "Byzantine", 3, victim, False, False, False, True, 0))
 
-        committee = Committee(111, users, 10, 1)
+        committee = CosmosCommittee(111, users, 10, 1)
         for i in range(0, totalRounds):
             print(str(mCount) + " " + str(i))
             isProduced = committee.round(i)
