@@ -27,6 +27,25 @@ class InivaValidator (Validator):
                 return
             if self.target.currentRole == "Member" and self.target.parent.type == "Byzantine":
                 block.signatures.remove(self.target)
+                return
+            removed = []
+            notRemoved = []
+            par = self.target.parent
+            if self.target.currentRole == "Aggregator":
+                par = self.target
+            elif self.target.currentRole == "Member":
+                par = self.target.parent
+            removed.append(par)
+            for child in par.children:
+                if child.type == "Byzantine":
+                    notRemoved.append(child)
+                else:
+                    removed.append(child)
+            if len(removed) <= self.colatural:
+                for r in removed:
+                    block.signatures.remove(r)
+                for r in notRemoved:
+                    r.secondChance = True
 
     def stealBonus(self):
         if self.parent == self.target and self.target.currentRole == "Aggregator":

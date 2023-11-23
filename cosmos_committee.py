@@ -4,9 +4,9 @@ from validator import Validator
 
 
 class CosmosCommittee (Committee):
-    def __init__(self, size, users, fanout, colatural=1):
+    def __init__(self, size, users, fanout):
         super().__init__(size, users)
-        self.leaderBonus = 0.15
+        self.leaderBonus = 0.18
         self.blockReward = 10000
 
     def shuffle(self):
@@ -23,12 +23,8 @@ class CosmosCommittee (Committee):
         maxfault = int(self.committeeSize / 3)
         threshold = self.committeeSize - maxfault
         leaderBonus = ((count - threshold) / maxfault) * self.leaderBonus * self.blockReward
-        fullLeaderBonus = self.leaderBonus * self.blockReward
-        votingReward = self.blockReward - fullLeaderBonus
+        votingReward = self.blockReward - leaderBonus
         for v in newBlock.signatures:
             v.reward += votingReward / len(newBlock.signatures)
             if v.currentRole == "Leader":
                 v.reward += leaderBonus
-        divisable = (fullLeaderBonus - leaderBonus)
-        for v in self.validators:
-            v.reward += divisable / len(self.validators)

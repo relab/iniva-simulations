@@ -4,12 +4,13 @@ from validator import Validator
 
 
 class InivaCommittee (Committee):
-    def __init__(self, size, users, fanout, colatural=1):
+    def __init__(self, size, users, fanout):
         super().__init__(size, users)
         self.fanout = fanout
-        self.colatural = colatural
+        self.leafCount = int((size - 1 - fanout)/ fanout)
         self.leaderBonus = 0.15
         self.aggregationBonus = 0.0002
+        #self.aggregationBonus = 0
         self.blockReward = 10000
 
     def shuffle(self):
@@ -24,7 +25,9 @@ class InivaCommittee (Committee):
         for i in range(1, self.fanout + 1):
             self.validators[i].currentRole = "Aggregator"
             self.validators[i].parent = self.validators[0]
-            for j in range((self.fanout * i) + 1, (self.fanout * i) + self.fanout + 1):
+            initial = (self.leafCount * (i-1)) + self.fanout+ 1
+            end = initial + self.leafCount
+            for j in range(initial, end):
                 self.validators[j].parent = self.validators[i]
                 self.validators[i].children.append(self.validators[j])
 
@@ -41,8 +44,7 @@ class InivaCommittee (Committee):
         for i in range(len(self.validators)):
             v = self.validators[i]
             if v.currentRole == "Aggregator" and v in newBlock.signatures:
-                for j in range((self.fanout * i) + 1, (self.fanout * i) + self.fanout + 1):
-                    v2 = self.validators[j]
+                for v2 in v.children:
                     fullAggregationBonus += self.aggregationBonus * self.blockReward
                     if v2 in newBlock.signatures and not v2.secondChance:
                         aggregationBonus += self.aggregationBonus * self.blockReward
