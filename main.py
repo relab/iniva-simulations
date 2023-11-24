@@ -7,13 +7,13 @@ from validator import Validator
 
 if __name__ == '__main__':
     totalRounds = 3000000
-    committeeSize = 109
-    fanout = 4
+    committeeSize = 111
+    fanout = 10
     omittedBlocks = []
 
     #ms = [0.05, 0.10, 0.15, 0.20, 0.25, 0.30]
     ms = [0.10, 0.30]
-    mCounts = [int(i * 111) for i in ms]
+    mCounts = [int(i * committeeSize) for i in ms]
     print(mCounts)
 
     rewardss = [[], [], []]
@@ -21,13 +21,13 @@ if __name__ == '__main__':
     for mCount in mCounts:
         users = []
         for i in range(0, committeeSize - 1 - mCount):
-            users.append(InivaValidator(len(users), "Correct", 1, 0))
-        victim = InivaValidator(len(users), "Correct", 2, 0)
+            users.append(CosmosValidator(len(users), "Correct", 1, 0))
+        victim = CosmosValidator(len(users), "Correct", 2, 0)
         users.append(victim)
         for i in range(0, mCount):
-            users.append(InivaValidator(len(users), "Byzantine", 3, victim, False, True, False, False, 100))
+            users.append(CosmosValidator(len(users), "Byzantine", 3, victim, False, True, False, False, 100))
 
-        committee = InivaCommittee(committeeSize, users, fanout)
+        committee = CosmosCommittee(committeeSize, users, fanout)
         for i in range(0, totalRounds):
             print(str(mCount) + " " + str(i))
             isProduced = committee.round(i)
@@ -38,13 +38,13 @@ if __name__ == '__main__':
             for j in range(0, len(users)):
                 if users[j].group == k:
                     total[k - 1] += users[j].reward
-        rewards = [total[j] / sum(total) for j in range(len(total))]
-        rewards = [rewards[j] / nums[j] for j in range(len(rewards))]
-        temp = 1 / committeeSize
+        #rewards = [total[j] / sum(total) for j in range(len(total))]
+        #rewards = [rewards[j] / nums[j] for j in range(len(rewards))]
+        #temp = 1 / committeeSize
         # rewards = [(x * 0.01) /temp for x in rewards]
-        rewards = [(x - temp) for x in rewards]
-        rewards = [rewards[j] / temp for j in range(len(rewards))]
+        #rewards = [(x - temp) for x in rewards]
+        #rewards = [rewards[j] / temp for j in range(len(rewards))]
         for k in range(1, 4):
-            rewardss[k - 1].append(rewards[k - 1])
-        print(rewards)
+            rewardss[k - 1].append(total[k - 1])
+        print(total)
     print(rewardss)

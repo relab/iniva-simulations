@@ -9,7 +9,7 @@ class InivaCommittee (Committee):
         self.fanout = fanout
         self.leafCount = int((size - 1 - fanout)/ fanout)
         self.leaderBonus = 0.15
-        self.aggregationBonus = 0.0002
+        self.aggregationBonus = 0.0005
         #self.aggregationBonus = 0
         self.blockReward = 10000
 

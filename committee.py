@@ -1,3 +1,5 @@
+import random
+
 class Committee:
     def __init__(self, size, users):
         self.committeeSize = size
@@ -5,6 +7,8 @@ class Committee:
         self.blocks = []
         self.omittedBlocks = 0
         self.proposer = self.validators[0]
+        self.seed = 42
+        random.seed(self.seed)
 
     def shuffle(self):
         pass
@@ -13,6 +17,7 @@ class Committee:
         pass
 
     def round(self, roundNumber):
+        random.seed(self.seed + roundNumber)
         self.shuffle()
         newBlock = self.proposer.propose(self.blocks)
         # print(self.proposer.__dict__)
